@@ -1,5 +1,6 @@
 package com.shrey.mongo.learning.util;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -18,11 +19,15 @@ public class JsonUtils {
         }
     }
 
-    public static <T> T deserialize(final String json, final Class<T> clazz) {
+    public static <T> T deserialize(final String json, final TypeReference<T> typeReference) {
         try {
-            return OBJECT_MAPPER.readValue(json, clazz);
+            return OBJECT_MAPPER.readValue(json, typeReference);
         } catch (Exception e) {
             throw new RuntimeException("Unable to de-serialize json", e);
         }
     }
+
+    /*
+    TypeReference<T>
+     */
 }

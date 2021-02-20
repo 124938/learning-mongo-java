@@ -1,19 +1,27 @@
 package com.shrey.mongo.learning.dal;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Projections;
 
+import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.UpdateResult;
 import com.shrey.mongo.learning.document.Employee;
+import com.shrey.mongo.learning.document.Job;
 import com.shrey.mongo.learning.util.JsonUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 @Slf4j
@@ -32,6 +40,8 @@ public class EmployeeDal {
 
     private void listCollection() {
         log.info("=== List collection - start ===");
+
+        // Fetch all collections
         this.mongoDatabase
                 .listCollectionNames()
                 .forEach((Consumer<String>) collection -> log.info(collection));
@@ -40,14 +50,16 @@ public class EmployeeDal {
 
     public void list() {
         log.info("=== List records - start ===");
+
+        // Execute find query
         this.mongoCollection
                 .find()
-                .forEach((Consumer<Document>) record ->log.info(record.toJson()));
+                .forEach((Consumer<Document>) record -> log.info(record.toJson()));
         log.info("=== List records - end ===");
     }
 
     public String create(final Employee employee) {
-        log.info("=== Inserting record - start ===");
+        log.info("=== Creating record - start ===");
         try {
             // Create document by converting object to JSON
             Document employeeDocument = new Document(Document.parse(JsonUtils.serialize(employee)));
@@ -60,29 +72,76 @@ public class EmployeeDal {
             return employeeDocument
                     .getObjectId("_id")
                     .toString();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Unable to insert record into collection", e);
         } finally {
-            log.info("=== Inserting record - end ===");
+            log.info("=== Creating record - end ===");
         }
     }
 
     public Employee fetchById(final String id) {
-        log.info("=== Fetch record - start ===");
+        log.info("=== Fetch by id - start ===");
         try {
+            // Execute query based on id
             Document document = this.mongoCollection
                     .find(Filters.eq("_id", new ObjectId(id)))
                     .first();
 
             if (document != null) {
-                return JsonUtils.deserialize(document.toJson(), Employee.class);
+                return JsonUtils
+                        .deserialize(document.toJson(), new TypeReference<Employee>() {});
             } else {
                 throw new RuntimeException("document id -> " + id+ " does not exist");
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Unable to find document for id -> " + id, e);
         } finally {
-            log.info("=== Fetch record - end ===");
+            log.info("=== Fetch by id - end ===");
         }
+    }
+
+    public List<Job> fetchJobById(final String id) {
+        log.info("=== Fetch job history by id - start ===");
+        try {
+            // Execute query based on id
+            Document document = this.mongoCollection
+                    .find(Filters.eq("_id", new ObjectId(id)))
+                    .projection(Projections.include("history"))
+                    .first();
+
+            if (document != null) {
+                return JsonUtils
+                        .deserialize(document.toJson(), new TypeReference<Employee>() {})
+                        .getHistory();
+            } else {
+                throw new RuntimeException("document id -> " + id+ " does not exist");
+            }
+        } catch (final Exception e) {
+            throw new RuntimeException("Unable to find document for id -> " + id, e);
+        } finally {
+            log.info("=== Fetch job history by id - end ===");
+        }
+    }
+
+    public void updateJobUsingCompanyById(final String id, final Job updatedJob) {
+        log.info("=== Update job using company by id - start ===");
+
+        // Prepare filter
+        Bson filter = Filters.and(
+                Filters.eq("_id", new ObjectId(id)),
+                Filters.eq("history.company", updatedJob.getCompany())
+        );
+
+        // Prepare updates
+        Bson updates = Updates.combine(
+                Updates.set("history.$.start", "test start"),
+                Updates.set("history.$.end", "test end")
+        );
+
+        // Execute update query
+        UpdateResult updateResult = this.mongoCollection.updateOne(filter, updates);
+        log.info(updateResult.toString());
+
+        log.info("=== Update job using company by id - start ===");
     }
 }

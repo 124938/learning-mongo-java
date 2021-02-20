@@ -6,6 +6,7 @@ import com.shrey.mongo.learning.document.Job;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 public class EmployeeDalTest {
@@ -14,16 +15,27 @@ public class EmployeeDalTest {
         // Create instance of dal
         EmployeeDal dal = new EmployeeDal("mongodb://localhost:27017", "sample_db", "employee");
 
-        // Fetch all records
+        // Fetch all employees
         dal.list();
 
-        // Insert new record
+        // Insert new employee
         long identifier = System.currentTimeMillis();
         String id = dal.create(createRecord(identifier));
 
-        // Fetch record
+        // Fetch employee by id
         Employee e = dal.fetchById(id);
         log.info(e.toString());
+
+        // Fetch history/job details of employee by id
+        List<Job> historyCurrent = dal.fetchJobById(id);
+        log.info(historyCurrent.toString());
+
+        // Update job details of employee using company by id
+        dal.updateJobUsingCompanyById(id, historyCurrent.get(0));
+
+        // Fetch history/job details of employee by id
+        List<Job> historyAfter = dal.fetchJobById(id);
+        log.info(historyAfter.toString());
     }
 
     private static Employee createRecord(long identifier) {
