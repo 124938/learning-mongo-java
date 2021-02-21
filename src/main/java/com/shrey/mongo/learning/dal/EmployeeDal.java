@@ -11,6 +11,8 @@ import com.mongodb.client.model.Projections;
 
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
+import com.shrey.mongo.learning.document.Address;
+import com.shrey.mongo.learning.document.Comment;
 import com.shrey.mongo.learning.document.Employee;
 import com.shrey.mongo.learning.document.Job;
 import com.shrey.mongo.learning.util.JsonUtils;
@@ -79,8 +81,25 @@ public class EmployeeDal {
         }
     }
 
+    public void updateAddress(final String id, final Address address) {
+        log.info("=== Update address - start ===");
+
+        // Prepare filter
+        Bson filter = Filters.eq("_id", new ObjectId(id));
+
+        // Push element into array
+        Document addressDocument = new Document(Document.parse(JsonUtils.serialize(address)));
+        Bson updates = Updates.set("address", addressDocument);
+
+        // Execute update query
+        UpdateResult updateResult = this.mongoCollection.updateOne(filter, updates);
+        log.info(updateResult.toString());
+
+        log.info("=== Update address - end ===");
+    }
+
     public Employee fetchById(final String id) {
-        log.info("=== Fetch by id - start ===");
+        log.info("=== Fetch employee by id - start ===");
         try {
             // Execute query based on id
             Document document = this.mongoCollection
@@ -96,52 +115,69 @@ public class EmployeeDal {
         } catch (final Exception e) {
             throw new RuntimeException("Unable to find document for id -> " + id, e);
         } finally {
-            log.info("=== Fetch by id - end ===");
+            log.info("=== Fetch employee by id - end ===");
         }
     }
 
-    public List<Job> fetchJobById(final String id) {
-        log.info("=== Fetch job history by id - start ===");
+    public List<Job> fetchJobsById(final String id) {
+        log.info("=== Fetch employee jobs by id - start ===");
         try {
             // Execute query based on id
             Document document = this.mongoCollection
                     .find(Filters.eq("_id", new ObjectId(id)))
-                    .projection(Projections.include("history"))
+                    .projection(Projections.include("jobs"))
                     .first();
 
             if (document != null) {
                 return JsonUtils
                         .deserialize(document.toJson(), new TypeReference<Employee>() {})
-                        .getHistory();
+                        .getJobs();
             } else {
                 throw new RuntimeException("document id -> " + id+ " does not exist");
             }
         } catch (final Exception e) {
             throw new RuntimeException("Unable to find document for id -> " + id, e);
         } finally {
-            log.info("=== Fetch job history by id - end ===");
+            log.info("=== Fetch employee jobs by id - end ===");
         }
     }
 
-    public void updateJobUsingCompanyById(final String id, final Job updatedJob) {
-        log.info("=== Update job using company by id - start ===");
+    public void updateJobByIdAndCompany(final String id, final Job updatedJob) {
+        log.info("=== Update job by id + company - start ===");
 
         // Prepare filter
         Bson filter = Filters.and(
                 Filters.eq("_id", new ObjectId(id)),
-                Filters.eq("history.company", updatedJob.getCompany())
+                Filters.eq("jobs.company", updatedJob.getCompany())
         );
 
         // Prepare updates
         Bson updates = Updates.combine(
-                Updates.set("history.$.start", "test start"),
-                Updates.set("history.$.end", "test end")
+                Updates.set("jobs.$.start", "test start"),
+                Updates.set("jobs.$.end", "test end")
         );
 
         // Execute update query
         UpdateResult updateResult = this.mongoCollection.updateOne(filter, updates);
         log.info(updateResult.toString());
 
-        log.info("=== Update job using company by id - start ===");
+        log.info("=== Update job by id + company - start ===");
+    }
+
+    public void updateCommentsById(final String id, final Comment comment) {
+        log.info("=== Push comment - start ===");
+
+        // Prepare filter
+        Bson filter = Filters.eq("_id", new ObjectId(id));
+
+        // Push element into array
+        Document commentDocument = new Document(Document.parse(JsonUtils.serialize(comment)));
+        Bson updates = Updates.push("comments", commentDocument);
+
+        // Execute update query
+        UpdateResult updateResult = this.mongoCollection.updateOne(filter, updates);
+        log.info(updateResult.toString());
+
+        log.info("=== Push comment - end ===");
     }
 }
