@@ -17,6 +17,7 @@ public class Employee {
     private List<Job> jobs;
     private List<Comment> comments;
 
+    // To avoid jackson reader issue
     public Employee() {
 
     }
@@ -34,7 +35,8 @@ public class Employee {
         sb.append("firstName='").append(firstName).append('\'');
         sb.append(", lastName='").append(lastName).append('\'');
         sb.append(", address=").append(address);
-        sb.append(", history=").append(jobs);
+        sb.append(", jobs=").append(jobs);
+        sb.append(", comments=").append(comments);
         sb.append('}');
         return sb.toString();
     }
