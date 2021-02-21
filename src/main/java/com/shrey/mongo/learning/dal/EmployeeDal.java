@@ -153,8 +153,8 @@ public class EmployeeDal {
 
         // Prepare updates
         Bson updates = Updates.combine(
-                Updates.set("jobs.$.start", "test start"),
-                Updates.set("jobs.$.end", "test end")
+                Updates.set("jobs.$.start", updatedJob.getStart()),
+                Updates.set("jobs.$.end", updatedJob.getEnd())
         );
 
         // Execute update query

@@ -36,11 +36,15 @@ public class EmployeeDalTest {
         log.info(e.toString());
 
         // Fetch history/job details of employee by id
-        List<Job> historyCurrent = dal.fetchJobsById(id);
-        log.info(historyCurrent.toString());
+        List<Job> jobsBefore = dal.fetchJobsById(id);
+        log.info(jobsBefore.toString());
 
         // Update job details of employee using company by id
-        dal.updateJobByIdAndCompany(id, historyCurrent.get(1));
+        Job updatedJob = jobsBefore.get(1);
+        updatedJob.setStart("Change start "+System.currentTimeMillis());
+        updatedJob.setEnd("Change end "+System.currentTimeMillis());
+
+        dal.updateJobByIdAndCompany(id, updatedJob);
 
         // Fetch history/job details of employee by id
         List<Job> historyAfter = dal.fetchJobsById(id);
