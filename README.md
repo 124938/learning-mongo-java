@@ -100,25 +100,34 @@ sudo docker exec -it mongodb bash
 show dbs;
 use sample_db;
 db.createCollection('employee');
-db.employee.insertOne(
-{
-    "_id" : ObjectId("602fac08c27a749a4bd707dc"),
-    "firstName" : "Shreyashkumar",
-    "lastName" : "Limbhetwala",
+db.employee.insertOne({
+    "firstName" : "Shreyashkumar 1613905335575",
+    "lastName" : "Limbhetwala 1613905335575",
     "address" : {
         "country" : "India",
         "state" : "Maharashtra",
-        "city" : "Pune"
+        "city" : "Pune 1613905335575"
     },
-    "history" : [ 
+    "jobs" : [ 
         {
-            "company" : "CTS",
-            "start" : "05-May-2005",
+            "company" : "CTS 1613905335575",
+            "start" : "11-May-2005",
             "end" : "15-Apr-2016"
+        }, 
+        {
+            "company" : "DB 1613905335575",
+            "start" : "test start",
+            "end" : "test end"
+        }
+    ],
+    "comments" : [ 
+        {
+            "from" : "Anyone 1613905335575",
+            "message" : "Any message 1613905335575",
+            "updatedAt" : NumberLong(1613905335804)
         }
     ]
-}
-)
+})
 ```
 
 ### Stop/Start mongodb in docker
