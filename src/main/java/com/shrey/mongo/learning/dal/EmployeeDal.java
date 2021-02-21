@@ -51,17 +51,17 @@ public class EmployeeDal {
     }
 
     public void list() {
-        log.info("=== List records - start ===");
+        log.info("=== List employee records - start ===");
 
         // Execute find query
         this.mongoCollection
                 .find()
                 .forEach((Consumer<Document>) record -> log.info(record.toJson()));
-        log.info("=== List records - end ===");
+        log.info("=== List records records - end ===");
     }
 
     public String create(final Employee employee) {
-        log.info("=== Creating record - start ===");
+        log.info("=== Creating employee - start ===");
         try {
             // Create document by converting object to JSON
             Document employeeDocument = new Document(Document.parse(JsonUtils.serialize(employee)));
@@ -77,12 +77,12 @@ public class EmployeeDal {
         } catch (final Exception e) {
             throw new RuntimeException("Unable to insert record into collection", e);
         } finally {
-            log.info("=== Creating record - end ===");
+            log.info("=== Creating employee - end ===");
         }
     }
 
     public void updateAddress(final String id, final Address address) {
-        log.info("=== Update address - start ===");
+        log.info("=== Update address of employee - start ===");
 
         // Prepare filter
         Bson filter = Filters.eq("_id", new ObjectId(id));
@@ -95,7 +95,7 @@ public class EmployeeDal {
         UpdateResult updateResult = this.mongoCollection.updateOne(filter, updates);
         log.info(updateResult.toString());
 
-        log.info("=== Update address - end ===");
+        log.info("=== Update address of employee - end ===");
     }
 
     public Employee fetchById(final String id) {
@@ -143,7 +143,7 @@ public class EmployeeDal {
     }
 
     public void updateJobByIdAndCompany(final String id, final Job updatedJob) {
-        log.info("=== Update job by id + company - start ===");
+        log.info("=== Update employee job by id + company - start ===");
 
         // Prepare filter
         Bson filter = Filters.and(
@@ -161,11 +161,11 @@ public class EmployeeDal {
         UpdateResult updateResult = this.mongoCollection.updateOne(filter, updates);
         log.info(updateResult.toString());
 
-        log.info("=== Update job by id + company - start ===");
+        log.info("=== Update employee job by id + company - start ===");
     }
 
     public void updateCommentsById(final String id, final Comment comment) {
-        log.info("=== Push comment - start ===");
+        log.info("=== Push employee comment - start ===");
 
         // Prepare filter
         Bson filter = Filters.eq("_id", new ObjectId(id));
@@ -178,6 +178,6 @@ public class EmployeeDal {
         UpdateResult updateResult = this.mongoCollection.updateOne(filter, updates);
         log.info(updateResult.toString());
 
-        log.info("=== Push comment - end ===");
+        log.info("=== Push employee comment - end ===");
     }
 }

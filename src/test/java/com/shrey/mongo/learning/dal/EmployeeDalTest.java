@@ -40,7 +40,7 @@ public class EmployeeDalTest {
         log.info(historyCurrent.toString());
 
         // Update job details of employee using company by id
-        dal.updateJobByIdAndCompany(id, historyCurrent.get(0));
+        dal.updateJobByIdAndCompany(id, historyCurrent.get(1));
 
         // Fetch history/job details of employee by id
         List<Job> historyAfter = dal.fetchJobsById(id);
@@ -64,10 +64,11 @@ public class EmployeeDalTest {
         job2.setStart("05-May-2016");
         job2.setEnd("15-May-2018");
 
-        Employee employee = new Employee();
-        employee.setFirstName("Shreyashkumar "+identifier);
-        employee.setLastName("Limbhetwala "+identifier);
-        employee.setJobs(Arrays.asList(job1, job2));
+        Employee employee = new Employee(
+                "Shreyashkumar "+identifier,
+                "Limbhetwala "+identifier,
+                Arrays.asList(job1, job2)
+        );
 
         return employee;
     }

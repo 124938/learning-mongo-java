@@ -14,8 +14,19 @@ public class Employee {
     private String firstName;
     private String lastName;
     private Address address;
-    private List<Job> jobs = new ArrayList<>();
-    private List<Comment> comments = new ArrayList<>();
+    private List<Job> jobs;
+    private List<Comment> comments;
+
+    public Employee() {
+
+    }
+
+    public Employee(final String firstName, final String lastName, final List<Job> jobs) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.jobs = jobs;
+        this.comments = new ArrayList<>();
+    }
 
     @Override
     public String toString() {
