@@ -17,7 +17,7 @@ import java.util.Arrays;
 @Slf4j
 public class MatchAndGroupDemo {
     public static void main(String[] args) throws Exception {
-        String connectionString = "mongodb+srv://admin:admin@my-first-mongodb-cluste.78ca9qb.mongodb.net/?retryWrites=true&w=majority";
+        String connectionString = System.getenv("MONGO_URI");
 
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
             // Match & Group aggregation

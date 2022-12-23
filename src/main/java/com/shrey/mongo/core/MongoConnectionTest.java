@@ -9,7 +9,7 @@ import java.util.List;
 
 public class MongoConnectionTest {
     public static void main(String[] args) {
-        String connectionString = "mongodb+srv://admin:admin@my-first-mongodb-cluste.78ca9qb.mongodb.net/?retryWrites=true&w=majority";
+        String connectionString = System.getenv("MONGO_URI");
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
             mongoClient.listDatabases().forEach(db ->
                     System.out.println(db.toJson())
